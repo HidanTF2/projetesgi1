@@ -98,7 +98,9 @@
 
 							//Transforme la data graphObject
 							$user = $response->getGraphObject("Facebook\GraphUser");
-							echo $user;
+							echo "<pre>";
+							print_r($user);
+							echo "</pre>";
 
 
 
