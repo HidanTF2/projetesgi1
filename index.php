@@ -87,7 +87,7 @@
 						$_SESSION['fb_token'] = $token;
 					}
 
-		
+
 					if($session){
 						try{
 							//Prepare
@@ -98,6 +98,7 @@
 
 							//Transforme la data graphObject
 							$user = $response->getGraphObject("Facebook\GraphUser");
+							echo $user;
 
 
 
