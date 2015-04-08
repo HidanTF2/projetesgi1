@@ -1,4 +1,19 @@
 <?php
+
+	/*
+		1er visite
+		Il doit voir un bouton se connecter
+		Lorsqu'il clique sur le bouton il va sur facebook et je lui demande les permissions
+		- Il accepte
+			-> je le redirige sur mon application
+			-> $session = getSessionFromRedirect();
+			-> $token = (string) $session->getAccessToken();
+
+		- Non merce
+			-> je le redirige sur mon application
+			-> j'affiche encore le bouton
+	*/
+
 	session_start();
 	require "facebook-php-sdk-v4-4.0-dev/autoload.php";
 	
@@ -6,13 +21,14 @@
 	use Facebook\FacebookRedirectLoginHelper;
 	use Facebook\GraphUser;
 	use Facebook\FacebookRequestException;
+	use Facebook\FacebookRequest;
 	
 	const APPID = "502175273270576";
 	const APPSECRET = "e14293037246a898dc6b2d40b6a3c089";
 
 	FacebookSession::setDefaultApplication(APPID, APPSECRET);
 	$helper = new FacebookRedirectLoginHelper('http://localhost');
-	$loginUrl = $helper->getLoginUrl();
+
 ?>
 
 
@@ -61,8 +77,42 @@
 				<br>
 
 				<?php
-					$loginUrl = $helper->getLoginUrl();
+
+
+					if(isset($_SESSION) && isset($_SESSION['fb_token'])){
+						$session = new FacebookSession($_SESSION['fb_token']);
+					}else {
+						$session = $helper->getSessionFromRedirect();
+						$token = (string) $session->getAccessToken();
+						$_SESSION['fb_token'] = $token;
+					}
+
+		
+					if($session){
+						try{
+							//Prepare
+							$request = new FacebookRequest($session, 'GET', '/me');
+
+							//Execute
+							$response = $request->execute();
+
+							//Transforme la data graphObject
+							$user = $response->getGraphObject("Facebook\GraphUser");
+
+
+
+						}catch (Exception $e){
+
+						}
+					}else{
+						$loginUrl = $helper->getLoginUrl();
 					echo "<a href='".$loginUrl."'>Se connecter</a>";
+					}
+					
+
+					
+
+
 				?>
 		</body>
 </html>
